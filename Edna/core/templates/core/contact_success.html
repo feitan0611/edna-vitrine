@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Message envoyé - EDNA&SA{% endblock %}
+
+{% block content %}
+<section style="padding:5rem 5%; text-align:center; min-height:60vh; display:flex; align-items:center; justify-content:center;">
+  <div data-aos="fade-up">
+    <div style="width:80px; height:80px; background:var(--primary); border-radius:50%; margin:0 auto 2rem; display:flex; align-items:center; justify-content:center;">
+      <svg width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="white" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/>
+      </svg>
+    </div>
+    <h1 style="font-size:2.5rem; font-weight:800; color:var(--gray-900); margin-bottom:1rem;">Merci !</h1>
+    <p style="font-size:1.2rem; color:var(--gray-600); max-width:600px; margin:0 auto 2rem;">
+      Votre message a été envoyé avec succès. Notre équipe vous répondra dans les plus brefs délais.
+    </p>
+    <a href="{% url 'index' %}" class="btn-solid" style="padding:1rem 2rem;">Retour à l'accueil</a>
+  </div>
+</section>
+{% endblock %}

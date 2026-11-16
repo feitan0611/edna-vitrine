@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Votre panier - EDNA&SA{% endblock %}
+
+{% block content %}
+<section style="padding: 2rem 5%; min-height: 60vh;">
+  <div class="container" style="max-width: 1200px; margin: 0 auto;">
+    <h1 style="font-size: 2rem; margin-bottom: 2rem;">Votre panier</h1>
+
+    {% if cart_items %}
+    <div class="cart-table-wrap">
+    <table class="cart-table">
+      <thead>
+        <tr style="background: var(--gray-100);">
+          <th style="padding: 1rem; text-align: left;">Produit</th>
+          <th style="padding: 1rem; text-align: left;">Prix unitaire</th>
+          <th style="padding: 1rem; text-align: left;">Quantité</th>
+          <th style="padding: 1rem; text-align: left;">Total</th>
+          <th style="padding: 1rem; text-align: left;">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+          {% for item in cart_items %}
+          <tr style="border-bottom: 1px solid var(--gray-200);">
+            <td data-label="Produit" style="padding: 1rem;">{{ item.product.name }}</td>
+            <td data-label="Prix unitaire" style="padding: 1rem;">{{ item.product.price }} FCFA</td>
+            <td data-label="Quantité" style="padding: 1rem;">
+              <form method="post" action="{% url 'update_cart' item.product.id %}" style="display:flex; gap:0.5rem;">
+                {% csrf_token %}
+                <input type="number" name="quantity" value="{{ item.quantity }}" min="1" style="width:60px; padding:0.3rem;">
+                <button type="submit" class="btn-outline" style="padding:0.3rem 0.8rem;">MàJ</button>
+              </form>
+            </td>
+            <td data-label="Total" style="padding: 1rem;">{{ item.subtotal }} FCFA</td>
+            <td data-label="Action" style="padding: 1rem;">
+              <form method="post" action="{% url 'remove_from_cart' item.product.id %}">
+                {% csrf_token %}
+                <button type="submit" class="btn-outline" style="color:#dc2626; border-color:#dc2626;">Supprimer</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+      </tbody>
+    </table>
+    </div>
+
+      <p style="font-size: 1.5rem; font-weight: 700; text-align: right;">Total : {{ cart_total }} FCFA</p>
+      <div style="display: flex; gap: 1rem; justify-content: flex-end; flex-wrap: wrap;">
+        <a href="{% url 'quote_request' %}" class="btn-solid">Demander un devis</a>
+        <a href="{% url 'produits' %}" class="btn-outline">Continuer mes achats</a>
+      </div>
+    {% else %}
+      <div style="text-align: center; padding: 3rem 1rem;">
+        <p style="font-size: 1.2rem; color: var(--gray-600);">Votre panier est vide.</p>
+        <a href="{% url 'produits' %}" class="btn-solid" style="margin-top: 1rem; display: inline-block;">Voir les produits</a>
+      </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

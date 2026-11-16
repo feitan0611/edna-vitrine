@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Demande envoyée - EDNA&SA{% endblock %}
+
+{% block content %}
+<section style="padding: 5rem; text-align: center; min-height: 60vh;">
+  <div style="max-width: 600px; margin: 0 auto;">
+    <h1 style="font-size: 2.5rem; color: var(--primary); margin-bottom: 1rem;">Merci !</h1>
+    <p style="font-size: 1.2rem; margin-bottom: 2rem;">Votre demande de devis a bien été envoyée. Notre équipe vous contactera dans les plus brefs délais.</p>
+    <a href="{% url 'index' %}" class="btn-solid">Retour à l'accueil</a>
+  </div>
+</section>
+{% endblock %}

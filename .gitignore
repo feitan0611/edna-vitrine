@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Django
+db.sqlite3
+Edna/media/
+Edna/staticfiles/
+
+# Secrets
+.env
+
+# Outils locaux
+.claude/
+.omc/

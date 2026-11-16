@@ -1,0 +1,555 @@
+{% extends "base.html" %} {% load static %} {% load video_filters %}
+ {% block title %} EDNA&SA – Actualités & Blog{% endblock %} {% block extra_head %}
+<style>
+  /* Classes d'animation supplémentaires */
+  .loop-pulse {
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.02);
+    }
+  }
+  .loop-tilt {
+    transition: transform 0.2s;
+  }
+  .loop-tilt:hover {
+    transform: rotate(3deg);
+  }
+
+  /* Media queries pour le hero responsive */
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+
+  /* Styles pour les cartes d'articles */
+  .article-card {
+    background: var(--white);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+    cursor: pointer;
+  }
+  .article-card:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-8px);
+  }
+  .article-badge {
+    padding: 0.25rem 0.5rem;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    display: inline-block;
+  }
+  .pagination-btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  /* Style pour le bouton lecture vidéo */
+  .play-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 4rem;
+    transition: transform 0.2s;
+  }
+  .play-overlay:hover {
+    transform: scale(1.1);
+  }
+</style>
+{% endblock %} {% block content %}
+
+<!-- HERO SECTION -->
+<section
+  style="
+    padding: 5rem 5%;
+    background: linear-gradient(
+      135deg,
+      var(--primary-light) 0%,
+      var(--white) 100%
+    );
+  "
+  data-aos="fade-up"
+>
+  <div style="max-width: 1200px; margin: 0 auto; text-align: center">
+    <h1
+      style="
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin-bottom: 1rem;
+      "
+    >
+      Actualités & Blog
+    </h1>
+    <p
+      style="
+        font-size: 1.125rem;
+        color: var(--gray-600);
+        line-height: 1.8;
+        max-width: 600px;
+        margin: 0 auto;
+      "
+    >
+      Découvrez nos dernières actualités, tendances du secteur biomédical, et
+      conseils d'experts
+    </p>
+  </div>
+</section>
+
+<!-- ARTICLE VEDETTE -->
+<section style="padding: 3rem 5%; background: var(--white)">
+  <div style="max-width: 1200px; margin: 0 auto">
+    <div
+      data-aos="fade-up"
+      class="hero-grid"
+      style="
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3rem;
+        align-items: center;
+      "
+    >
+      <!-- Bloc vidéo / image de l'article vedette -->
+      <div
+        style="
+          aspect-ratio: 16/9;
+          background: linear-gradient(
+            135deg,
+            var(--primary) 0%,
+            var(--primary-dark) 100%
+          );
+          border-radius: 12px;
+          overflow: hidden;
+          box-shadow: var(--shadow-md);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          position: relative;
+        "
+      >
+        {% if featured_article.video_url %}
+        <iframe
+          width="100%"
+          height="100%"
+          src="{{ featured_article.video_url|embed_video }}"
+          frameborder="0"
+          allowfullscreen
+          loading="lazy"
+          style="position: absolute; top: 0; left: 0"
+        ></iframe>
+        {% else %}
+        <!-- Fallback : image ou SVG -->
+        <svg
+          width="200"
+          height="200"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="var(--primary-light)"
+          stroke-width="0.5"
+        >
+          <rect
+            x="2"
+            y="2"
+            width="20"
+            height="20"
+            rx="2"
+            stroke="currentColor"
+            fill="none"
+          />
+          <circle cx="12" cy="12" r="3" stroke="currentColor" fill="none" />
+          <path
+            d="M5 5 L8 8 M19 5 L16 8 M5 19 L8 16 M19 19 L16 16"
+            stroke="currentColor"
+          />
+        </svg>
+        {% endif %}
+      </div>
+      <div>
+        <div style="display: flex; gap: 1rem; margin-bottom: 1rem">
+          <span
+            style="
+              padding: 0.375rem 0.75rem;
+              background: var(--primary);
+              color: white;
+              border-radius: 6px;
+              font-size: 0.75rem;
+              font-weight: 600;
+            "
+            >ACTUALITÉ</span
+          >
+          <span style="color: var(--gray-600); font-size: 0.9rem"
+            >{{ featured_article.created_at|date:"d F Y"|default:"24 Janvier 2024" }}</span
+          >
+        </div>
+        <h2
+          style="
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            line-height: 1.3;
+          "
+        >
+          {{ featured_article.name|default:"La certification ISO 13485 : un gage de qualité pour vos équipements" }}
+        </h2>
+        <p
+          style="color: var(--gray-700); line-height: 1.8; margin-bottom: 2rem"
+        >
+          {{ featured_article.description|default:"Découvrez comment la certification ISO 13485 garantit la qualité, la fiabilité et la conformité réglementaire de tous nos équipements biomédicaux. Un article complet sur les normes internationales." }}
+        </p>
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap">
+          <a
+            href="{% if featured_article.slug %}{% url 'actualite_detail' featured_article.slug %}{% else %}#{% endif %}"
+            class="btn-solid"
+            >Lire l'article</a
+          >
+          <button class="btn-outline">Partager</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARTICLES GRID (récents) -->
+<!-- ARTICLES GRID (récents) -->
+<section style="padding: 5rem 5%; background: var(--gray-50)">
+  <div style="max-width: 1200px; margin: 0 auto">
+    <h2
+      style="
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin-bottom: 3rem;
+      "
+    >
+      Articles récents
+    </h2>
+    <div
+      class="products-grid"
+      style="
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      "
+    >
+      {% for article in recent_articles %}
+      <div
+        class="article-card"
+        data-aos="zoom-in"
+        data-aos-delay="{{ forloop.counter0|add:50 }}"
+      >
+        <!-- Bloc image/vidéo de l'article -->
+        <div
+          style="
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+          "
+        >
+          {% if article.video_url %}
+          <div class="relative w-full h-64 overflow-hidden group">
+            <img
+              src="{% if article.image %}{{ article.image.url }}{% else %}{% static 'image/default-article.jpg' %}{% endif %}"
+              alt="{{ article.title }}"
+              class="absolute inset-0 w-full h-full object-cover group-hover:opacity-80 transition-opacity duration-300"
+            />
+
+            <a
+              href="{% url 'actualite_detail' article.slug %}"
+              class="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/20 transition-all duration-300"
+              aria-label="Lire l'article : {{ article.title }}"
+            >
+              <span
+                class="text-white text-5xl transform group-hover:scale-110 transition-transform duration-300"
+              >
+                ▶
+              </span>
+            </a>
+          </div>
+          {% else %}
+          <svg
+            width="80"
+            height="80"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="white"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+          {% endif %}
+        </div>
+        <div style="padding: 1.5rem">
+          <div style="margin-bottom: 1rem">
+            <span class="article-badge" style="background: var(--primary)"
+              >ACTUALITÉ</span
+            >
+          </div>
+          <h3
+            style="
+              font-weight: 700;
+              color: var(--gray-900);
+              margin-bottom: 0.5rem;
+              font-size: 1.1rem;
+            "
+          >
+            {{ article.name }}
+          </h3>
+          <p
+            style="
+              color: var(--gray-600);
+              font-size: 0.9rem;
+              line-height: 1.6;
+              margin-bottom: 1rem;
+            "
+          >
+            {{ article.description|truncatewords:15 }}
+          </p>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding-top: 1rem;
+              border-top: 1px solid var(--gray-200);
+            "
+          >
+            <span style="color: var(--gray-500); font-size: 0.85rem"
+              >{{ article.created_at|date:"d F Y" }}</span
+            >
+            <a href="{% url 'actualite_detail' article.slug %}" class="btn-add"
+              >Lire →</a
+            >
+          </div>
+        </div>
+      </div>
+      {% empty %}
+      <!-- Articles statiques de secours -->
+      <div class="article-card" data-aos="zoom-in">
+        <div
+          style="
+            aspect-ratio: 16/9;
+            background: linear-gradient(135deg, #3b82f6 0%, #1e40af 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+          "
+        >
+          <svg
+            width="80"
+            height="80"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="white"
+            stroke-width="1.5"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+            />
+          </svg>
+        </div>
+        <div style="padding: 1.5rem">
+          <div style="margin-bottom: 1rem">
+            <span class="article-badge" style="background: var(--primary)"
+              >GUIDE</span
+            >
+          </div>
+          <h3 style="font-weight: 700; font-size: 1.1rem">
+            Maintenance préventive : Guide complet
+          </h3>
+          <p style="color: var(--gray-600); font-size: 0.9rem">
+            Apprenez les meilleures pratiques pour maintenir vos équipements en
+            bon état et prolonger leur durée de vie.
+          </p>
+          <div
+            style="
+              display: flex;
+              justify-content: space-between;
+              align-items: center;
+              padding-top: 1rem;
+              border-top: 1px solid var(--gray-200);
+            "
+          >
+            <span style="color: var(--gray-500); font-size: 0.85rem"
+              >10 Janvier 2024</span
+            >
+            <button class="btn-add">Lire →</button>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- PAGINATION -->
+    <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 3rem;" data-aos="fade-up">
+
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="pagination-btn" style="background: var(--gray-200); color: var(--gray-900)">
+        ← Précédent
+    </a>
+    {% endif %}
+
+    {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+            <span class="pagination-btn" style="background: var(--primary); color: white">
+                {{ num }}
+            </span>
+        {% else %}
+            <a href="?page={{ num }}" class="pagination-btn" style="background: var(--gray-200); color: var(--gray-900)">
+                {{ num }}
+            </a>
+        {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="pagination-btn" style="background: var(--gray-200); color: var(--gray-900)">
+        Suivant →
+    </a>
+    {% endif %}
+
+</div>
+  
+</section>
+
+<!-- SECTION VIDÉOS -->
+<section style="padding: 5rem 5%; background: var(--white)">
+  <div style="max-width: 1200px; margin: 0 auto">
+    <h2
+      style="
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin-bottom: 3rem;
+      "
+    >
+      Nos vidéos
+    </h2>
+    <div
+      class="products-grid"
+      style="
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      "
+    >
+      {% for video in videos %}
+      <div class="article-card" data-aos="zoom-in">
+        <div
+          class="video-container"
+          style="position: relative; padding-bottom: 56.25%"
+        >
+          <iframe
+            src="{{ video.video_url|embed_video }}"
+            frameborder="0"
+            allowfullscreen
+            loading="lazy"
+            style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+            "
+          ></iframe>
+        </div>
+        <div style="padding: 1.5rem">
+          <h3 style="font-weight: 700; font-size: 1.1rem">{{ video.name }}</h3>
+          <p style="color: var(--gray-600); font-size: 0.9rem">
+            {{ video.description|truncatewords:15 }}
+          </p>
+        </div>
+      </div>
+      {% empty %}
+      <p style="text-align: center">Aucune vidéo pour le moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER SIGNUP -->
+<section style="padding: 4rem 5%; background: var(--white)">
+  <div
+    style="max-width: 600px; margin: 0 auto; text-align: center"
+    data-aos="fade-up"
+  >
+    <h2
+      style="
+        font-size: 1.75rem;
+        font-weight: 800;
+        color: var(--gray-900);
+        margin-bottom: 0.5rem;
+      "
+    >
+      Restez informé
+    </h2>
+    <p style="color: var(--gray-600); margin-bottom: 2rem">
+      Recevez nos dernières actualités et conseils d'experts directement dans
+      votre boîte e-mail
+    </p>
+    <form
+      action="#"
+      method="POST"
+      onsubmit="
+        event.preventDefault();
+        alert('Merci ! Vous êtes maintenant abonné.');
+      "
+    >
+      {% csrf_token %}
+      <input
+        type="email"
+        name="email"
+        placeholder="votre@email.com"
+        required
+        style="
+          flex: 1;
+          padding: 0.75rem 1rem;
+          border: 2px solid var(--gray-200);
+          border-radius: 6px;
+          font-size: 1rem;
+          width: 100%;
+        "
+      />
+      <button type="submit" class="btn-solid" style="margin-top: 0.75rem">
+        S'abonner
+      </button>
+    </form>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner" data-aos="fade-up">
+  <h2>Vous avez besoin d'accompagnement ?</h2>
+  <p>Notre équipe d'experts est disponible 24/7 pour vous conseiller</p>
+  <a href="{% url 'contact' %}" class="btn-cta loop-pulse"
+    >Nous contacter <span class="arrow">→</span></a
+  >
+</section>
+
+{% endblock %}

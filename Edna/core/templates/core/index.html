@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}EDNA&SA – Accueil | Solutions biomédicales{% endblock %}
+
+{% block content %}
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left" data-aos="fade-left" data-aos-delay="100">
+    <h1 class="hero-title">Solutions biomédicales<br>pour les professionnels</h1>
+    <p class="hero-sub">Équipements médicaux, consommables et instruments pour professionnels de santé. Expertise depuis 1998.</p>
+    <div class="hero-btns">
+      <a href="{% url 'produits' %}"><button class="btn-hero-primary">
+        Découvrir nos produits <span class="arrow">→</span>
+      </button></a>
+      <a href="{% url 'contact' %}"><button class="btn-hero-secondary">Demander un devis</button></a>
+    </div>
+  </div>
+  <!-- Background image layer -->
+  <div class="hero-bg" aria-hidden="true" style="background-image: url('{% static 'image/gros-lit.jpg' %}')"></div>
+  <div class="hero-right" data-aos="fade-right" data-aos-delay="200">
+    <img src="{% static 'image/personage.avif' %}" alt="Lit d'hôpital" class="hero-img">
+  </div>
+</section>
+
+<!-- TRUST STRIP -->
+<div class="trust-strip">
+  <div class="trust-item" data-aos="fade-up" data-aos-delay="0">
+    <svg class="trust-icon loop-tilt" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+    </svg>
+    <span class="trust-label">Certifié CE & FDA</span>
+    <span class="trust-sub">Conformité garantie</span>
+  </div>
+  <div class="trust-item" data-aos="fade-up" data-aos-delay="100">
+    <svg class="trust-icon loop-tilt" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 18.75a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 01-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 01-3 0m3 0a1.5 1.5 0 00-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 00-3.213-9.193 2.056 2.056 0 00-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 00-10.026 0 1.106 1.106 0 00-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12"/>
+    </svg>
+    <span class="trust-label">Livraison rapide</span>
+    <span class="trust-sub">24-48h en côte d'ivoire</span>
+  </div>
+  <div class="trust-item" data-aos="fade-up" data-aos-delay="200">
+    <svg class="trust-icon loop-tilt" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M14.25 9.75v-4.5m0 4.5h4.5m-4.5 0l6-6m-3 18c-8.284 0-15-6.716-15-15V4.5A2.25 2.25 0 014.5 2.25h1.372c.516 0 .966.351 1.091.852l1.106 4.423c.11.44-.054.902-.417 1.173l-1.293.97a1.062 1.062 0 00-.38 1.21 12.035 12.035 0 007.143 7.143c.441.162.928-.004 1.21-.38l.97-1.293a1.125 1.125 0 011.173-.417l4.423 1.106c.5.125.852.575.852 1.091V19.5a2.25 2.25 0 01-2.25 2.25H21z"/>
+    </svg>
+    <span class="trust-label">Support expert</span>
+    <span class="trust-sub">Assistance 7j/7</span>
+  </div>
+  <div class="trust-item" data-aos="fade-up" data-aos-delay="300">
+    <svg class="trust-icon loop-tilt" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 013 3h-15a3 3 0 013-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H9.497m5.007 0a7.454 7.454 0 01-.982-3.172M9.497 14.25a7.454 7.454 0 00.981-3.172M5.25 4.236c-.982.143-1.954.317-2.916.52A6.003 6.003 0 007.73 9.728M5.25 4.236V4.5c0 2.108.966 3.99 2.48 5.228M5.25 4.236V2.721C7.456 2.41 9.71 2.25 12 2.25c2.291 0 4.545.16 6.75.47v1.516M7.73 9.728a6.726 6.726 0 002.748 1.35m8.272-6.842V4.5c0 2.108-.966 3.99-2.48 5.228m2.48-5.492a46.32 46.32 0 012.916.52 6.003 6.003 0 01-5.395 4.972m0 0a6.726 6.726 0 01-2.749 1.35m0 0a6.772 6.772 0 01-3.044 0"/>
+    </svg>
+    <span class="trust-label">25 ans d'expérience</span>
+    <span class="trust-sub">Depuis 1998</span>
+  </div>
+</div>
+
+<!-- PRODUITS PHARES -->
+<section class="products-section">
+  <div class="section-header" data-aos="fade-up" data-aos-delay="0">
+    <h2>Produits phares</h2>
+    <p>Découvrez notre sélection d'équipements biomédicaux les plus demandés</p>
+  </div>
+  <div class="products-grid" data-aos="fade-up" data-aos-delay="0">
+    <!-- Produit 1 -->
+    <div class="product-card" data-aos="zoom-in" data-aos-delay="0">
+      <div class="product-img" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);"> 
+        <img src="{% static 'image/OIP.webp' %}" alt="">
+      </div>
+      <div class="product-body">
+        <div class="product-cat">Équipements médicaux</div>
+        <div class="product-name">Moniteur multiparamétrique MX-500</div>
+        <div class="product-desc">Moniteur patient haute performance avec écran tactile 15" et connectivité sans fil.</div>
+        <div class="product-price">20000fcfa <span>HT / unité</span></div>
+        <button class="btn-add">Ajouter au panier</button>
+      </div>
+    </div>
+    <!-- Produit 2 -->
+    <div class="product-card" data-aos="zoom-in" data-aos-delay="100">
+      <div class="product-img" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
+        <img src="{% static 'image/OIP (1).webp' %}" alt="">
+      </div>
+      <div class="product-body">
+        <div class="product-cat">Équipements médicaux</div>
+        <div class="product-name">Défibrillateur automatique DEA-300</div>
+        <div class="product-desc">Défibrillateur externe automatique avec guidage vocal et analyse cardiaque intégrée.</div>
+        <div class="product-price">15000 fcfa <span>HT / unité</span></div>
+        <button class="btn-add">Ajouter au panier</button>
+      </div>
+    </div>
+    <!-- Produit 3 -->
+    <div class="product-card" data-aos="zoom-in" data-aos-delay="200">
+      <div class="product-img" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+        <img src="{% static 'image/Sang.webp' %}" alt="">
+      </div>
+      <div class="product-body">
+        <div class="product-cat">Consommables</div>
+        <div class="product-name">Gants d'examen nitrile (boîte de 100)</div>
+        <div class="product-desc">Gants non stériles en nitrile, résistance chimique élevée, sans latex ni poudre.</div>
+        <div class="product-price">12000 fcfa <span>HT / boîte</span></div>
+        <button class="btn-add">Ajouter au panier</button>
+      </div>
+    </div>
+  </div>
+  <div class="see-all-wrap">
+    <a href="{% url 'produits' %}"><button class="btn-see-all">Voir tous les produits <span class="arrow">→</span></button></a>
+  </div>
+</section>
+
+<!-- NOS CATÉGORIES -->
+<section class="categories-section">
+  <div class="section-header" data-aos="fade-up" data-aos-delay="0">
+    <h2>Nos catégories</h2>
+    <p>Trouvez l'équipement adapté à vos besoins</p>
+  </div>
+  <div class="categories-grid" data-aos="fade-up" data-aos-delay="0">
+    <div class="cat-card" data-aos="zoom-in" data-aos-delay="0">
+      <div class="cat-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3"/>
+        </svg>
+      </div>
+      <div class="cat-name">Équipements médicaux</div>
+      <div class="cat-sub">Moniteurs, défibrillateurs, respirateurs</div>
+    </div>
+    <div class="cat-card" data-aos="zoom-in" data-aos-delay="100">
+      <div class="cat-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="#b45309" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 01-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 014.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0112 15a9.065 9.065 0 00-6.23-.693L5 14.5m14.8.8l1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0112 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5"/>
+        </svg>
+      </div>
+      <div class="cat-name">Laboratoire</div>
+      <div class="cat-sub">Microscopes, centrifugeuses, analyseurs</div>
+    </div>
+    <div class="cat-card" data-aos="zoom-in" data-aos-delay="200">
+      <div class="cat-icon">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z"/>
+        </svg>
+      </div>
+      <div class="cat-name">Consommables</div>
+      <div class="cat-sub">Gants, masques, kits de soins</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner" data-aos="fade-up" data-aos-delay="0">
+  <h2>Besoin d'un devis personnalisé ?</h2>
+  <p>Nos experts sont à votre écoute pour vous conseiller et établir un devis<br>adapté à vos besoins</p>
+  <a href="{% url 'contact' %}"><button class="btn-cta loop-pulse">Demander un devis gratuit <span class="arrow">→</span></button></a>
+</section>
+
+{% endblock %}

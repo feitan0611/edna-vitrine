@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}EDNA&SA – À propos de nous{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Styles spécifiques à la page À propos */
+  .timeline-item {
+    padding: 1.5rem;
+    background: var(--white);
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: var(--shadow-sm);
+  }
+  .timeline-year {
+    font-weight: 800;
+    color: var(--primary);
+    font-size: 1.25rem;
+  }
+  .stat-card {
+    padding: 2rem;
+    text-align: center;
+    background: var(--gray-50);
+    border-radius: 12px;
+  }
+  .stat-number {
+    font-size: 3rem;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 0.5rem;
+  }
+  .stat-label {
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 0.5rem;
+  }
+  .stat-sub {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+  }
+  .value-card {
+    padding: 2rem;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border-top: 4px solid var(--primary);
+  }
+  @media screen and (max-width: 768px) {
+    .stat-number {
+      font-size: 2.5rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section style="padding:5rem 5%;background:linear-gradient(135deg,var(--primary-light) 0%,var(--white) 100%);" data-aos="fade-up">
+  <div style="max-width:1200px;margin:0 auto;text-align:center;">
+    <h1 style="font-size:2.5rem;font-weight:800;color:var(--gray-900);margin-bottom:1rem;">EDNA&SA : 20 ans d'excellence biomédicale</h1>
+    <p style="font-size:1.125rem;color:var(--gray-600);line-height:1.8;max-width:700px;margin:0 auto;">
+      Depuis 1998, nous accompagnons les structures de santé en Côte d'Ivoire avec des solutions fiables, innovantes et conformes aux normes internationales.
+    </p>
+  </div>
+</section>
+
+<!-- MISSION VISION VALUES -->
+<section style="padding:5rem 5%;background:var(--white);" data-aos="fade-up">
+  <div style="max-width:1200px;margin:0 auto;">
+    <div class="products-grid" style="grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:2rem;">
+      
+      <!-- Mission -->
+      <div class="value-card" data-aos="zoom-in">
+        <h3 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);margin-bottom:1rem;">Notre mission</h3>
+        <p style="color:var(--gray-700);line-height:1.8;">
+          Améliorer l'accès à l'équipement biomédical de qualité pour tous les établissements de santé, du plus grand hôpital au plus petit centre de soin.
+        </p>
+      </div>
+      
+      <!-- Vision -->
+      <div class="value-card" data-aos="zoom-in" data-aos-delay="100">
+        <h3 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);margin-bottom:1rem;">Notre vision</h3>
+        <p style="color:var(--gray-700);line-height:1.8;">
+          Être le leader incontournable des solutions biomédicales en Afrique de l'Ouest, reconnu pour son expertise et son engagement envers l'excellence.
+        </p>
+      </div>
+      
+      <!-- Valeurs -->
+      <div class="value-card" data-aos="zoom-in" data-aos-delay="200">
+        <h3 style="font-size:1.5rem;font-weight:700;color:var(--gray-900);margin-bottom:1rem;">Nos valeurs</h3>
+        <p style="color:var(--gray-700);line-height:1.8;">
+          Intégrité, innovation, responsabilité, et respect de nos partenaires. Nous mettons la qualité et la conformité au cœur de chaque projet.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HISTORIQUE -->
+<section style="padding:5rem 5%;background:var(--gray-50);" data-aos="fade-up">
+  <div style="max-width:900px;margin:0 auto;">
+    <h2 style="text-align:center;font-size:2rem;font-weight:800;color:var(--gray-900);margin-bottom:3rem;">Notre parcours</h2>
+    <div style="position:relative;">
+      <div style="border-left:4px solid var(--primary);padding-left:2rem;position:relative;">
+        
+        <!-- 1998 -->
+        <div class="timeline-item" data-aos="fade-right">
+          <div class="timeline-year">1998</div>
+          <div style="font-weight:700;color:var(--gray-900);margin:0.5rem 0;">Fondation d'EDNA&SA</div>
+          <p style="color:var(--gray-600);margin:0;">Création de l'entreprise avec une vision simple : fournir l'équipement biomédical de qualité à tous.</p>
+        </div>
+        
+        <!-- 2005 -->
+        <div class="timeline-item" data-aos="fade-right" data-aos-delay="100">
+          <div class="timeline-year">2005</div>
+          <div style="font-weight:700;color:var(--gray-900);margin:0.5rem 0;">Certification ISO 13485</div>
+          <p style="color:var(--gray-600);margin:0;">Obtention de la certification qualité internationale pour les équipements médicaux.</p>
+        </div>
+        
+        <!-- 2015 -->
+        <div class="timeline-item" data-aos="fade-right" data-aos-delay="200">
+          <div class="timeline-year">2015</div>
+          <div style="font-weight:700;color:var(--gray-900);margin:0.5rem 0;">Expansion régionale</div>
+          <p style="color:var(--gray-600);margin:0;">Extension de nos services à 5 pays d'Afrique de l'Ouest.</p>
+        </div>
+        
+        <!-- 2024 -->
+        <div class="timeline-item" data-aos="fade-right" data-aos-delay="300">
+          <div class="timeline-year">2024</div>
+          <div style="font-weight:700;color:var(--gray-900);margin:0.5rem 0;">Position de leader</div>
+          <p style="color:var(--gray-600);margin:0;">Plus de 200 structures satisfaites et 500+ équipements gérés avec excellence.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CHIFFRES CLÉS -->
+<section style="padding:5rem 5%;background:var(--white);" data-aos="fade-up">
+  <div style="max-width:1200px;margin:0 auto;">
+    <h2 style="text-align:center;font-size:2rem;font-weight:800;color:var(--gray-900);margin-bottom:3rem;">Chiffres clés</h2>
+    <div class="products-grid" style="grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:2rem;">
+      
+      <!-- 20 ans -->
+      <div class="stat-card" data-aos="zoom-in">
+        <div class="stat-number">20</div>
+        <p class="stat-label">Ans d'expertise</p>
+        <p class="stat-sub">Depuis 1998</p>
+      </div>
+      
+      <!-- 200+ structures -->
+      <div class="stat-card" data-aos="zoom-in" data-aos-delay="100">
+        <div class="stat-number">200+</div>
+        <p class="stat-label">Structures clients</p>
+        <p class="stat-sub">Hôpitaux & Cliniques</p>
+      </div>
+      
+      <!-- 500+ équipements -->
+      <div class="stat-card" data-aos="zoom-in" data-aos-delay="200">
+        <div class="stat-number">500+</div>
+        <p class="stat-label">Équipements</p>
+        <p class="stat-sub">Sous contrat maintenance</p>
+      </div>
+      
+      <!-- 50+ experts -->
+      <div class="stat-card" data-aos="zoom-in" data-aos-delay="300">
+        <div class="stat-number">50+</div>
+        <p class="stat-label">Experts techniques</p>
+        <p class="stat-sub">Certifiés & expérimentés</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BANNER -->
+<section class="cta-banner" data-aos="fade-up">
+  <h2>Rejoignez nos 200+ partenaires</h2>
+  <p>Confiez vos équipements biomédicaux à des experts reconnus</p>
+  <a href="{% url 'contact' %}"><button class="btn-cta loop-pulse">Prendre rendez-vous <span class="arrow">→</span></button></a>
+</section>
+
+{% endblock %}

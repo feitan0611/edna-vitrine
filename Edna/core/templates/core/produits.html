@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}EDNA&SA – Notre catalogue{% endblock %}
+
+{% block extra_head %}
+<style>
+  /* Styles spécifiques au catalogue */
+  .catalog-page {
+    padding: 3rem 5%;
+    background: var(--white);
+  }
+  .catalog-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 2.5rem;
+  }
+  /* Sidebar filtre */
+  .filter-sidebar {
+    background: var(--gray-50);
+    border-radius: var(--radius);
+    padding: 2rem 1.5rem;
+    height: fit-content;
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
+  }
+  .filter-sidebar h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid var(--primary-light);
+  }
+  .filter-categories {
+    list-style: none;
+    margin-bottom: 2rem;
+  }
+  .filter-categories li {
+    margin-bottom: 0.75rem;
+  }
+  .filter-categories a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-sm);
+    color: var(--gray-700);
+    font-weight: 500;
+    transition: all 0.2s;
+    border-left: 3px solid transparent;
+    text-decoration: none;
+  }
+  .filter-categories a:hover {
+    background: var(--primary-light);
+    color: var(--primary-dark);
+    border-left-color: var(--primary);
+  }
+  .filter-categories a.active {
+    background: var(--primary-light);
+    color: var(--primary);
+    font-weight: 600;
+    border-left-color: var(--primary);
+  }
+  .filter-categories a .count {
+    margin-left: auto;
+    font-size: 0.85rem;
+    color: var(--gray-500);
+  }
+  /* Section résultats */
+  .catalog-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+  .catalog-header h1 {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gray-900);
+  }
+  .catalog-header p {
+    color: var(--gray-600);
+  }
+  .catalog-sort {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--white);
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    border: 1px solid var(--gray-200);
+  }
+  .catalog-sort select {
+    border: none;
+    background: transparent;
+    font-weight: 600;
+    color: var(--gray-800);
+    outline: none;
+  }
+  .products-grid-catalog {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 2rem;
+  }
+  /* Responsive */
+  @media screen and (max-width: 1024px) {
+    .catalog-container {
+      grid-template-columns: 240px 1fr;
+      gap: 1.5rem;
+    }
+  }
+  @media screen and (max-width: 768px) {
+    .catalog-container {
+      grid-template-columns: 1fr;
+    }
+    .filter-sidebar {
+      order: 2;
+    }
+    .catalog-header h1 {
+      font-size: 1.75rem;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- PAGE CATALOGUE -->
+<section class="catalog-page" data-aos="fade-up">
+  <div class="catalog-container">
+    <!-- SIDEBAR FILTRE -->
+    <aside class="filter-sidebar" data-aos="fade-right">
+      <h3>Filtrer par catégorie</h3>
+      <ul class="filter-categories">
+        <!-- Lien "Tous" -->
+        <li>
+          <a href="{% url 'produits' %}" {% if not categorie_active %}class="active"{% endif %}>
+            Tous <span class="count">({{ total_produits }})</span>
+          </a>
+        </li>
+        <!-- Liste des catégories dynamiques -->
+        {% for cat in categories %}
+        <li>
+          <a href="{% url 'produits' %}?categorie={{ cat.slug }}" {% if categorie_active == cat.slug %}class="active"{% endif %}>
+            {{ cat.nom }} <span class="count">({{ cat.nb_produits }})</span>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+    </aside>
+
+    <!-- LISTE PRODUITS -->
+    <div class="catalog-results">
+      <div class="catalog-header">
+        <div>
+          <h1>Notre catalogue</h1>
+          <p>Découvrez notre large gamme d'équipements biomédicaux certifiés et de haute qualité</p>
+        </div>
+        <div class="catalog-sort">
+          <label for="sort">Trier par :</label>
+          <select id="sort" onchange="window.location.href = this.value;">
+            <option value="{% url 'produits' %}?{% if request.GET.categorie %}categorie={{ request.GET.categorie }}&{% endif %}tri=pertinence" {% if request.GET.tri == 'pertinence' or not request.GET.tri %}selected{% endif %}>Pertinence</option>
+            <option value="{% url 'produits' %}?{% if request.GET.categorie %}categorie={{ request.GET.categorie }}&{% endif %}tri=prix_croissant" {% if request.GET.tri == 'prix_croissant' %}selected{% endif %}>Prix croissant</option>
+            <option value="{% url 'produits' %}?{% if request.GET.categorie %}categorie={{ request.GET.categorie }}&{% endif %}tri=prix_decroissant" {% if request.GET.tri == 'prix_decroissant' %}selected{% endif %}>Prix décroissant</option>
+            <option value="{% url 'produits' %}?{% if request.GET.categorie %}categorie={{ request.GET.categorie }}&{% endif %}tri=nouveautes" {% if request.GET.tri == 'nouveautes' %}selected{% endif %}>Nouveautés</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="products-grid-catalog">
+        {% for product in products %}
+        <div class="product-card" data-aos="zoom-in" {% if forloop.counter0 %}data-aos-delay="{{ forloop.counter0|add:50 }}"{% endif %}>
+          <div class="product-img" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); display: flex; align-items: center; justify-content: center;">
+            {% if product.image %}
+              <img src="{{ product.image.url }}" alt="{{ product.name }}">
+            {% else %}
+              <img src="{% static 'image/default-product.jpg' %}" alt="{{ product.name }}">
+            {% endif %}
+          </div>
+          <div class="product-body">
+            <div class="product-cat">{{ product.categorie.nom }}</div>
+            <div class="product-name">{{ product.name }}</div>
+            <div class="product-desc">{{ product.description|truncatewords:15 }}</div>
+            <div class="product-price">{{ product.price }} FCFA <span>HT</span></div>
+            <form method="post" action="{% url 'add_to_cart' product.id %}">
+              {% csrf_token %}
+              <input type="hidden" name="quantity" value="1">
+              <button type="submit" class="btn-add">Ajouter au panier</button>
+            </form>
+          </div>
+        </div>
+        {% empty %}
+        <p style="grid-column: 1/-1; text-align: center; padding: 2rem;">
+          Aucun produit trouvé dans cette catégorie.
+        </p>
+        {% endfor %}
+      </div>
+
+      <!-- PAGINATION -->
+      <div style="display: flex; justify-content: center; gap: 0.5rem; margin-top: 3rem; flex-wrap: wrap;" data-aos="fade-up">
+        {% if page_obj.has_previous %}
+          <a href="?{% if request.GET.categorie %}categorie={{ request.GET.categorie }}&{% endif %}{% if request.GET.tri %}tri={{ request.GET.tri }}&{% endif %}page={{ page_obj.previous_page_number }}" 
+             style="padding:0.5rem 1rem; background: var(--gray-200); border: none; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; color: var(--gray-900);">
+             ← Précédent
+          </a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+          {% if page_obj.number == num %}
+            <span style="padding:0.5rem 1rem; background: var(--primary); color: white; border: none; border-radius: 6px; font-weight: 600;">{{ num }}</span>
+          {% else %}
+            <a href="?{% if request.GET.categorie %}categorie={{ request.GET.categorie }}&{% endif %}{% if request.GET.tri %}tri={{ request.GET.tri }}&{% endif %}page={{ num }}" 
+               style="padding:0.5rem 1rem; background: var(--gray-200); border: none; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; color: var(--gray-900);">
+               {{ num }}
+            </a>
+          {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+          <a href="?{% if request.GET.categorie %}categorie={{ request.GET.categorie }}&{% endif %}{% if request.GET.tri %}tri={{ request.GET.tri }}&{% endif %}page={{ page_obj.next_page_number }}" 
+             style="padding:0.5rem 1rem; background: var(--gray-200); border: none; border-radius: 6px; cursor: pointer; font-weight: 600; text-decoration: none; color: var(--gray-900);">
+             Suivant →
+          </a>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
