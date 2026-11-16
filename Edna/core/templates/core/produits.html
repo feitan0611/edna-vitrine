@@ -184,7 +184,7 @@
           </div>
           <div class="product-body">
             <div class="product-cat">{{ product.categorie.nom }}</div>
-            <div class="product-name">{{ product.name }}</div>
+            <div class="product-name"><a href="{{ product.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ product.name }}</a></div>
             <div class="product-desc">{{ product.description|truncatewords:15 }}</div>
             <div class="product-price">{{ product.price }} FCFA <span>HT</span></div>
             <form method="post" action="{% url 'add_to_cart' product.id %}">

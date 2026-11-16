@@ -63,45 +63,30 @@
     <p>Découvrez notre sélection d'équipements biomédicaux les plus demandés</p>
   </div>
   <div class="products-grid" data-aos="fade-up" data-aos-delay="0">
-    <!-- Produit 1 -->
-    <div class="product-card" data-aos="zoom-in" data-aos-delay="0">
-      <div class="product-img" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);"> 
-        <img src="{% static 'image/OIP.webp' %}" alt="">
+    {% for product in prods %}
+    <div class="product-card" data-aos="zoom-in" data-aos-delay="{% widthratio forloop.counter0 1 100 %}">
+      <div class="product-img" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+        {% if product.image %}
+          <img src="{{ product.image.url }}" alt="{{ product.name }}">
+        {% else %}
+          <img src="{% static 'image/default-product.jpg' %}" alt="{{ product.name }}">
+        {% endif %}
       </div>
       <div class="product-body">
-        <div class="product-cat">Équipements médicaux</div>
-        <div class="product-name">Moniteur multiparamétrique MX-500</div>
-        <div class="product-desc">Moniteur patient haute performance avec écran tactile 15" et connectivité sans fil.</div>
-        <div class="product-price">20000fcfa <span>HT / unité</span></div>
-        <button class="btn-add">Ajouter au panier</button>
+        <div class="product-cat">{{ product.categorie.nom }}</div>
+        <div class="product-name"><a href="{{ product.get_absolute_url }}" style="color:inherit;text-decoration:none;">{{ product.name }}</a></div>
+        <div class="product-desc">{{ product.description|truncatewords:15 }}</div>
+        <div class="product-price">{{ product.price }} FCFA <span>HT / unité</span></div>
+        <form method="post" action="{% url 'add_to_cart' product.id %}">
+          {% csrf_token %}
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="btn-add">Ajouter au panier</button>
+        </form>
       </div>
     </div>
-    <!-- Produit 2 -->
-    <div class="product-card" data-aos="zoom-in" data-aos-delay="100">
-      <div class="product-img" style="background: linear-gradient(135deg, #dcfce7 0%, #bbf7d0 100%);">
-        <img src="{% static 'image/OIP (1).webp' %}" alt="">
-      </div>
-      <div class="product-body">
-        <div class="product-cat">Équipements médicaux</div>
-        <div class="product-name">Défibrillateur automatique DEA-300</div>
-        <div class="product-desc">Défibrillateur externe automatique avec guidage vocal et analyse cardiaque intégrée.</div>
-        <div class="product-price">15000 fcfa <span>HT / unité</span></div>
-        <button class="btn-add">Ajouter au panier</button>
-      </div>
-    </div>
-    <!-- Produit 3 -->
-    <div class="product-card" data-aos="zoom-in" data-aos-delay="200">
-      <div class="product-img" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
-        <img src="{% static 'image/Sang.webp' %}" alt="">
-      </div>
-      <div class="product-body">
-        <div class="product-cat">Consommables</div>
-        <div class="product-name">Gants d'examen nitrile (boîte de 100)</div>
-        <div class="product-desc">Gants non stériles en nitrile, résistance chimique élevée, sans latex ni poudre.</div>
-        <div class="product-price">12000 fcfa <span>HT / boîte</span></div>
-        <button class="btn-add">Ajouter au panier</button>
-      </div>
-    </div>
+    {% empty %}
+    <p style="grid-column: 1/-1; text-align: center; padding: 2rem;">Nos produits arrivent bientôt.</p>
+    {% endfor %}
   </div>
   <div class="see-all-wrap">
     <a href="{% url 'produits' %}"><button class="btn-see-all">Voir tous les produits <span class="arrow">→</span></button></a>

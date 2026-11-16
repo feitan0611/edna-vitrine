@@ -1,4 +1,6 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.utils.http import url_has_allowed_host_and_scheme
 from django.views.generic import TemplateView, DetailView, CreateView, ListView, View
 from django.urls import reverse_lazy
 from django.contrib.auth.views import LoginView, LogoutView
@@ -20,6 +22,16 @@ class DetailViewProduct(DetailView):
     model = Product
     context_object_name = 'product'
     slug_url_kwarg = 'slug'
+
+    def get_queryset(self):
+        return Product.objects.filter(is_available=True).select_related('categorie')
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['similaires'] = Product.objects.filter(
+            is_available=True, categorie=self.object.categorie
+        ).exclude(pk=self.object.pk)[:3]
+        return context
 
 
 class SignUpView(CreateView):
@@ -119,47 +131,53 @@ def update_cart_quantity(request, product_id, quantity):
     request.session['cart'] = cart
     request.session.modified = True
 
+def parse_quantity(value, default=1):
+    """Convertit une quantité saisie en entier, sans planter sur une valeur invalide."""
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
+
+def build_cart_items(request):
+    """Construit les lignes du panier à partir de la session.
+    Les produits supprimés ou indisponibles sont ignorés."""
+    cart = get_cart(request)
+    product_ids = [item['product_id'] for item in cart]
+    products = Product.objects.filter(id__in=product_ids, is_available=True).select_related('categorie')
+    product_dict = {p.id: p for p in products}
+    cart_items = []
+    total = 0
+    for item in cart:
+        product = product_dict.get(item['product_id'])
+        if not product:
+            continue
+        subtotal = product.price * item['quantity']
+        cart_items.append({'product': product, 'quantity': item['quantity'], 'subtotal': subtotal})
+        total += subtotal
+    return cart_items, total
+
 def clear_cart(request):
     """Vide le panier."""
     request.session['cart'] = []
     request.session.modified = True
 class CartView(TemplateView):
     template_name = 'core/cart.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        cart = get_cart(self.request)
-        if not cart:
-            context['cart_items'] = []
-            context['cart_total'] = 0
-            return context
-        
-        product_ids = [item['product_id'] for item in cart]
-        products = Product.objects.filter(id__in=product_ids).select_related('categorie')
-        # Créer un dictionnaire pour accès rapide
-        product_dict = {p.id: p for p in products}
-        
-        cart_items = []
-        total = 0
-        for item in cart:
-            product = product_dict.get(item['product_id'])
-            if not product:
-                continue  # produit supprimé ?
-            subtotal = product.price * item['quantity']
-            cart_items.append({
-                'product': product,
-                'quantity': item['quantity'],
-                'subtotal': subtotal,
-            })
-            total += subtotal
-        context['cart_items'] = cart_items
-        context['cart_total'] = total
+        context['cart_items'], context['cart_total'] = build_cart_items(self.request)
         return context
+
 class AddToCartView(View):
     def post(self, request, product_id):
-        quantity = int(request.POST.get('quantity', 1))
-        add_to_cart(request, product_id, quantity)
-        return redirect(request.META.get('HTTP_REFERER', 'produits'))
+        product = get_object_or_404(Product, pk=product_id, is_available=True)
+        quantity = max(1, parse_quantity(request.POST.get('quantity')))
+        add_to_cart(request, product.id, quantity)
+        messages.success(request, f"« {product.name} » a été ajouté au panier.")
+        next_url = request.META.get('HTTP_REFERER')
+        if next_url and url_has_allowed_host_and_scheme(next_url, allowed_hosts={request.get_host()}):
+            return redirect(next_url)
+        return redirect('produits')
 
 class RemoveFromCartView(View):
     def post(self, request, product_id):
@@ -168,7 +186,7 @@ class RemoveFromCartView(View):
 
 class UpdateCartView(View):
     def post(self, request, product_id):
-        quantity = int(request.POST.get('quantity', 1))
+        quantity = parse_quantity(request.POST.get('quantity'))
         update_cart_quantity(request, product_id, quantity)
         return redirect('cart')
 
@@ -177,42 +195,29 @@ class QuoteRequestView(CreateView):
     form_class = QuoteRequestForm
     template_name = 'core/quote_form.html'
     success_url = reverse_lazy('quote_success')
-    
+
+    def dispatch(self, request, *args, **kwargs):
+        # Une demande de devis sans produit n'a pas de sens : on renvoie au catalogue.
+        if not build_cart_items(request)[0]:
+            messages.info(request, "Votre panier est vide : ajoutez des produits avant de demander un devis.")
+            return redirect('produits')
+        return super().dispatch(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        # Ajouter le résumé du panier au contexte
-        cart = get_cart(self.request)
-        product_ids = [item['product_id'] for item in cart]
-        products = Product.objects.filter(id__in=product_ids)
-        cart_items = []
-        total = 0
-        for item in cart:
-            product = products.get(id=item['product_id'])
-            subtotal = product.price * item['quantity']
-            cart_items.append({
-                'product': product,
-                'quantity': item['quantity'],
-                'subtotal': subtotal,
-            })
-            total += subtotal
-        context['cart_items'] = cart_items
-        context['cart_total'] = total
+        context['cart_items'], context['cart_total'] = build_cart_items(self.request)
         return context
-    
+
     def form_valid(self, form):
-        # Sauvegarder la demande de devis
+        cart_items, _ = build_cart_items(self.request)
         quote = form.save()
-        # Récupérer le panier
-        cart = get_cart(self.request)
-        for item in cart:
-            QuoteItem.objects.create(
-                quote=quote,
-                product_id=item['product_id'],
-                quantity=item['quantity']
-            )
-        # Vider le panier
+        QuoteItem.objects.bulk_create([
+            QuoteItem(quote=quote, product=item['product'], quantity=item['quantity'])
+            for item in cart_items
+        ])
         clear_cart(self.request)
-        return super().form_valid(form)
+        self.object = quote
+        return redirect(self.get_success_url())
 
 class QuoteSuccessView(TemplateView):
     template_name = 'core/quote_success.html'

@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ product.name }} – EDNA&SA{% endblock %}
+
+{% block extra_head %}
+<style>
+  .product-detail { padding: 3rem 5%; }
+  .product-detail-inner {
+    max-width: 1200px; margin: 0 auto;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start;
+  }
+  .product-detail-img {
+    background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+    border-radius: var(--radius); overflow: hidden; aspect-ratio: 4 / 3;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .product-detail-img img { width: 100%; height: 100%; object-fit: cover; }
+  .breadcrumb { font-size: .9rem; color: var(--gray-500, #6b7280); margin-bottom: 1rem; }
+  .breadcrumb a { color: var(--primary); text-decoration: none; }
+  .product-detail h1 { font-size: 2rem; color: var(--gray-900, #111827); margin: .5rem 0 1rem; }
+  .product-detail .product-cat { display: inline-block; }
+  .product-detail .price { font-size: 1.75rem; font-weight: 700; color: var(--primary); margin: 1.25rem 0; }
+  .product-detail .price span { font-size: 1rem; font-weight: 500; color: var(--gray-500, #6b7280); }
+  .product-detail .desc { line-height: 1.7; color: var(--gray-700, #374151); white-space: pre-line; }
+  .add-form { display: flex; gap: .75rem; margin-top: 2rem; flex-wrap: wrap; }
+  .add-form input[type=number] {
+    width: 90px; padding: .7rem; border: 1px solid var(--gray-200, #e5e7eb); border-radius: 8px; font-size: 1rem;
+  }
+  .add-form .btn-add { width: auto; padding: .75rem 1.75rem; }
+  .similar { max-width: 1200px; margin: 4rem auto 0; }
+  .similar h2 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+  .similar-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.5rem; }
+  .similar-grid a { text-decoration: none; color: inherit; }
+  @media (max-width: 768px) {
+    .product-detail-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="product-detail">
+  <div class="product-detail-inner">
+    <div class="product-detail-img">
+      {% if product.image %}
+        <img src="{{ product.image.url }}" alt="{{ product.name }}">
+      {% else %}
+        <img src="{% static 'image/default-product.jpg' %}" alt="{{ product.name }}">
+      {% endif %}
+    </div>
+
+    <div>
+      <div class="breadcrumb">
+        <a href="{% url 'produits' %}">Catalogue</a> ›
+        <a href="{% url 'produits' %}?categorie={{ product.categorie.slug }}">{{ product.categorie.nom }}</a>
+      </div>
+      <div class="product-cat">{{ product.categorie.nom }}</div>
+      <h1>{{ product.name }}</h1>
+      <div class="price">{{ product.price }} FCFA <span>HT / unité</span></div>
+      <div class="desc">{{ product.description }}</div>
+
+      <form method="post" action="{% url 'add_to_cart' product.id %}" class="add-form">
+        {% csrf_token %}
+        <label for="qty" class="sr-only" style="position:absolute;left:-9999px;">Quantité</label>
+        <input id="qty" type="number" name="quantity" value="1" min="1">
+        <button type="submit" class="btn-add">Ajouter au panier</button>
+      </form>
+    </div>
+  </div>
+
+  {% if similaires %}
+  <div class="similar">
+    <h2>Dans la même catégorie</h2>
+    <div class="similar-grid">
+      {% for p in similaires %}
+      <a href="{{ p.get_absolute_url }}" class="product-card">
+        <div class="product-body">
+          <div class="product-cat">{{ p.categorie.nom }}</div>
+          <div class="product-name">{{ p.name }}</div>
+          <div class="product-price">{{ p.price }} FCFA <span>HT</span></div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+</section>
+{% endblock %}

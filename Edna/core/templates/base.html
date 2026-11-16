@@ -59,7 +59,7 @@
           elviskonan73@gmail.com
         </span>
       </div>
-      <span>Livraison gaduite à première commande</span>
+      <span>Livraison gratuite à première commande</span>
     </div>
 
     <!-- NAVBAR -->
@@ -126,7 +126,18 @@
     ></div>
 
     <!-- CONTENU PRINCIPAL -->
-    <main>{% block content %}{% endblock %}</main>
+    <main>
+      {% if messages %}
+      <div class="flash-messages" role="status" style="max-width:1200px;margin:1rem auto 0;padding:0 5%;">
+        {% for message in messages %}
+        <div class="flash flash-{{ message.tags }}" style="padding:0.85rem 1.25rem;margin-bottom:0.5rem;border-radius:var(--radius);background:#e0f2fe;color:#0b4a5e;border-left:4px solid var(--primary);font-weight:500;">
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
 
     <!-- FOOTER -->
     <footer>

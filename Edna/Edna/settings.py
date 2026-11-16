@@ -11,11 +11,9 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
-import ssl
 import os
 
 
-ssl._create_default_https_context = ssl._create_unverified_context
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -31,9 +29,12 @@ MEDIA_ROOT = BASE_DIR / 'media'
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'django-insecure-dev-only-ne-pas-utiliser-en-production')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DJANGO_DEBUG', '1') == '1'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [h for h in os.environ.get('DJANGO_ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',') if h]
+
+if not DEBUG and SECRET_KEY.startswith('django-insecure'):
+    raise RuntimeError('DJANGO_SECRET_KEY doit être défini en production.')
 
 
 # Application definition
@@ -45,7 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'debug_toolbar',
     'core',
 ]
 
@@ -53,18 +53,26 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-INTERNAL_IPS = [
-    # ...
-    "127.0.0.1",
-    # ...
-]
+INTERNAL_IPS = ["127.0.0.1"]
+
+# La debug toolbar n'est activée qu'en développement, et seulement si elle est installée.
+try:
+    import debug_toolbar  # noqa: F401
+    import sys
+    DEBUG_TOOLBAR = (DEBUG and 'test' not in sys.argv
+                     and os.environ.get('DJANGO_DEBUG_TOOLBAR', '1') == '1')
+except ImportError:
+    DEBUG_TOOLBAR = False
+
+if DEBUG_TOOLBAR:
+    INSTALLED_APPS.append('debug_toolbar')
+    MIDDLEWARE.insert(3, 'debug_toolbar.middleware.DebugToolbarMiddleware')
 
 ROOT_URLCONF = 'Edna.urls'
 
@@ -120,9 +128,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'fr-fr'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Africa/Abidjan'
 
 USE_I18N = True
 
@@ -133,17 +141,26 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-STATICFILES_DIRS = [ BASE_DIR / 'static' ]
+STATICFILES_DIRS = [p for p in [BASE_DIR / 'static'] if p.exists()]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # authentication redirects
 LOGIN_REDIRECT_URL = 'index'
 LOGOUT_REDIRECT_URL = 'index'
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
 EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
 DEFAULT_FROM_EMAIL = 'EDNA&SA <noreply@ednasa.ci>'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# En dev les e-mails s'affichent dans la console ; en prod, SMTP si identifiants fournis.
+EMAIL_BACKEND = os.environ.get(
+    'DJANGO_EMAIL_BACKEND',
+    'django.core.mail.backends.smtp.EmailBackend' if (EMAIL_HOST_USER and not DEBUG)
+    else 'django.core.mail.backends.console.EmailBackend',
+)
+
+if not DEBUG:
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
