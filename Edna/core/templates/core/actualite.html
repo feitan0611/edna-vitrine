@@ -154,8 +154,14 @@
           loading="lazy"
           style="position: absolute; top: 0; left: 0"
         ></iframe>
+        {% elif featured_article.image %}
+        <img
+          src="{{ featured_article.image.url }}"
+          alt="{{ featured_article.name }}"
+          style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover"
+        />
         {% else %}
-        <!-- Fallback : image ou SVG -->
+        <!-- Fallback : SVG si l'article n'a ni vidéo ni image -->
         <svg
           width="200"
           height="200"

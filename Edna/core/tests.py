@@ -45,6 +45,13 @@ class PagesTests(BaseTestCase):
         self.assertContains(response, "Gants nitrile")
         self.assertNotContains(response, self.product.name)
 
+    def test_article_a_la_une_affiche_son_image(self):
+        self.article.is_featured = True
+        self.article.image = 'actualite_images/test.jpg'
+        self.article.save()
+        response = self.client.get(reverse('actualite'))
+        self.assertContains(response, '/media/actualite_images/test.jpg')
+
     def test_actualites_publiees_seulement(self):
         self.assertEqual(self.client.get(self.article.get_absolute_url()).status_code, 200)
         brouillon = Actualite.objects.get(name="Brouillon")
